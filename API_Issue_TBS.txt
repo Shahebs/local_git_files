@@ -1,0 +1,230 @@
+Error : '404- Forbidden - Read of user data is forbidden'  
+ 
+I see you are using Account number 1193110 in the API call, Please note we need to use Account ID instead of account number. You can get account ID using curl or in the swagger. 
+ 
+Using  Curl:  
+ 
+ 
+ 
+# curl -H "Authorization: Bearer $token" -X 'GET' 'https://api.access.redhat.com/account/v1/accounts?firstResultIndex=0&maxResults=100' | jq 
+ 
+ 
+Using swagger: 
+ 
+ 
+Go to https://access.redhat.com/management/api/account#/users/getAccountDetailsUsingGET  >> Click on 'try it out' >> Click on 'Execute'  and in the response body you will see Account Details (Account ID & Account name ).  
+ 
+Use that same Account ID for all API endpoints related to account management. It should work as expected since you do have Org admin rights in the account. Here your account ID is 5857761. 
+ 
+ 
+For Ex:  
+
+  
+
+#curl -H "Authorization: Bearer $token" -X 'GET' 'https://api.access.redhat.com/account/v1/accounts/5857761/users?firstResultIndex=0&maxResults=100&status=enabled' | jq 
+ 
+ 
+Q: Is it alternative API for the same? Or this is user management not reflated to RH support portal?  API: https://developers.redhat.com/api-catalog/api/accounts-management-service 
+ 
+>> Yes, Those API endpoints are   () different one , for user management we only have RHSM API api.access.redhat.com . 
+ 
+ 
+ 
+Subscription management API 
+
+To Update Subscription Allocation 
+ 
+
+Possible value for simpleContentAccess are: 
+
+    enabled  /   disabled 
+ 
+
+# curl -H "Authorization: Bearer $token"  -X PUT 'https://api.access.redhat.com/management/v1/allocations/626ba30d-f03c-4336-88de-b7d960fac95d' --data-raw '{ "simpleContentAccess": "enabled" }' 
+
+ 
+ 
+
+# curl -H "Authorization: Bearer $token"  -X PUT 'https://api.access.redhat.com/management/v1/allocations/626ba30d-f03c-4336-88de-b7d960fac95d' --data-raw '{ "simpleContentAccess": "disabled" }' 
+
+ 
+
+ 
+To List all systems for a user 
+
+# curl -H "Authorization: Bearer $token" -H 'accept: application/json'  -X GET https://api.access.redhat.com/management/v1/systems | jq 
+
+  
+
+To get system specified by UUID 
+
+# curl -H "Authorization: Bearer $token" -X GET https://api.access.redhat.com/management/v1/systems/dbb85b6f-9830-43f5-8fc2-0addee6669b8 | jq 
+
+  
+
+To Get details of the user's organization  
+
+# curl -H "Authorization: Bearer $token" -X GET https://api.access.redhat.com/management/v1/organization | jq  
+ 
+To Get the details of an advisory 
+
+# curl -H "Authorization: Bearer $token"  -X GET https://api.access.redhat.com/management/v1/errata/RHSA-2023%3A0383 | jq 
+
+ 
+ 
+
+  
+ 
+ 
+Account Management API 
+
+ 
+
+To see account details of current user 
+
+# curl -H "Authorization: Bearer $token" -X 'GET' 'https://api.access.redhat.com/account/v1/accounts?firstResultIndex=0&maxResults=100' | jq 
+
+ 
+ 
+
+To see users in the account 
+
+#curl -H "Authorization: Bearer $token" -X 'GET' 'https://api.access.redhat.com/account/v1/accounts/1979710/users?firstResultIndex=0&maxResults=100&status=enabled' | jq 
+
+ 
+ 
+
+To see User details 
+
+# curl -H "Authorization: Bearer $token" -X 'GET' https://api.access.redhat.com/account/v1/accounts/1979710/users/55009607 | jq 
+
+ 
+ 
+
+To get Personal details of Current user 
+
+# curl -H "Authorization: Bearer $token" -X GET 'https://api.access.redhat.com/account/v1/user' | jq 
+
+ 
+ 
+
+========================================================== 
+Troubleshooting steps ...   
+========================================================== 
+ 
+ 
+Step 1 : Obtain offline_token from https://access.redhat.com/management/api 
+ 
+ 
+ 
+Step 2 :  Set the offline token  
+           
+# offline_token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' 
+ 
+ 
+ 
+*Verify it's set: 
+ 
+           
+# echo $offline_token 
+ 
+ 
+ 
+Step 3 : Get the access token 
+ 
+    
+ 
+      # curl https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token -d grant_type=refresh_token -d client_id=rhsm-api -d refresh_token=$offline_token 
+ 
+ 
+ 
+ 
+Step 4 : Grab the access token with the function we created before 
+          
+        
+ 
+# token=$(curl https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token -d grant_type=refresh_token -d client_id=rhsm-api -d refresh_token=$offline_token | jq --raw-output .access_token) 
+ 
+        
+ 
+Verify the access_token is set 
+ 
+       # echo $token 
+ 
+ 
+ 
+Step 5 : Perform an API call:  
+ 
+ 
+         # curl -H "Authorization: Bearer $token"  "https://api.access.redhat.com/management/v1/systems?limit=100" 
+ 
+ 
+ 
+For reference : [Getting started with Red Hat APIs] [Troubleshooting] <----- check this  
+https://access.redhat.com/articles/3626371 
+ 
+ 
+      
+==========================================================  
+ 
+Case management API 
+
+ 
+
+To create a support case with Severity 
+
+ 
+Case severity can be mentioned as 1 (Urgent) , 2 (High) , 3 (Normal) ,  4 (Low) 
+ 
+# curl -H "Authorization: Bearer $token" -H 'Content-Type: application/json'  -X POST 'https://api.access.redhat.com/support/v1/cases' --data-raw '{ "product":"Red Hat Enterprise Linux", "version":"9.2", "summary":"This is test case for testing API functionality ", "description":"This is test case", "severity":"2 (High)" }' 
+ 
+If severity is not mentioned in the RHSM API call , by default it  will be set to 
+3 (Normal) . 
+ 
+[root@rhel8 ~]# curl -H "Authorization: Bearer $token" -H 'Content-Type: application/json'  -X POST 'https://api.access.redhat.com/support/v1/cases' --data-raw '{ "product":"Red Hat Enterprise Linux", "version":"9.2", "summary":"This is test case for testing API functionality ", "description":"This is test case" }' 
+
+ 
+Output: 
+
+{ 
+
+  "location" : [ "https://access.redhat.com/hydra/rest/v1/cases/03554160" ] 
+
+} 
+
+[root@rhel8 ~]# 
+ 
+ 
+ 
+
+To Get case details:  
+
+# curl -H "Authorization: Bearer $token" -X GET https://api.access.redhat.com/support/v1/cases/03259001 | jq 
+
+ 
+ 
+
+To get the case attachments 
+# curl -H "Authorization: Bearer $token" -X GET https://api.access.redhat.com/support/v1/cases/03515714/attachments | jq 
+ 
+
+To get case comment 
+
+# curl -H "Authorization: Bearer $token" -X GET https://api.access.redhat.com/support/v1/cases/03515714/comments | jq 
+
+ 
+Posting comment on the case 
+
+# curl -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -X POST 'https://api.access.redhat.com/support/v1/cases/03553699/comments' --data-raw '{"commentBody": “Test Public Comment” }' 
+
+ 
+ 
+
+Upload an attachment to the case 
+
+# curl -H "Authorization: Bearer $token"  -X POST 'https://api.access.redhat.com/support/v1/cases/03553699/attachments' --form 'fileName=@"/tmp/api_test1.txt"' 
+
+ 
+ 
+
+ 
