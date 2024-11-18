@@ -1,0 +1,57 @@
+Info alert: Supported Upgrade Paths 
+
+=================================================================================================================
+You must perform the upgrade from each version to the next. Upgrading from the Beta to GA version is not supported. 
+==================================================================================================================
+
+Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.9 → Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.8 → Satellite 6.9 → Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.7 → Satellite 6.8 → Satellite 6.9 → Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.6 → Satellite 6.7 → Satellite 6.8 → Satellite 6.9 → Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+
+Satellite 6.5 → Satellite 6.6 → Satellite 6.7 → Satellite 6.8 → Satellite 6.9 → Satellite 6.10 → Satellite 6.11 → Satellite 6.12 
+ 
+=====================================================================
+Red Hat Satellite Upgrade Helper 
+https://access.redhat.com/labs/satelliteupgradehelper/  
+=====================================================================
+
+
+=============================
+Please follow the below steps: 
+============================== 
+1. Please refresh manifest on Red Hat Satellite WebUI using below step: 
+ 
+Red Hat Satellite WebUI >> Content >> Subscriptions >> Manage Manifest >> Click on "Refresh" button 
+ 
+============================================
+2. Please try to enable required repository again on Red Hat Satellite WebUI: 
+ 
+Red Hat Satellite WebUI >> Content >> Red Hat Repositories >> Search for "rhel-7-server-rpms" or "rhel-8-server-rpms" (As per requirement ) 
+ 
+============================================
+3. In order to sync repository on Red Hat Satellite WebUI, please follow the below step: 
+ 
+Red Hat Satellite WebUI >> Content >> Sync Status >> Expand All >> Select enabled repositories >> Synchronize Now
+============================================
+
+
+=======================================================
+please try to do advance sync for the affcted repository.  
+ 
+Login to Satellite WebUI > Content > Products > Open the RHEL8 product from the list > Open the 'rhel-8-for-x86_64-appstream-rpms' repository > Select action > Advance sync > validate sync > sync 
+=======================================================
+
+
+========================================
+$ cat etc/rhsm/rhsm.conf | grep baseurl 
+ 
+baseurl= https://auhbssatlp0001.qbe.com.au/pulp/content/  
+========================================
