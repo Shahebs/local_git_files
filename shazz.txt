@@ -1,0 +1,8 @@
+
+Hello team, 
+This is a new project that we are starting . 
+We will save the data on the local_git_files 
+please make sure that we use the same repo.
+Thanky you,
+Bye Bye 
+Shazz
