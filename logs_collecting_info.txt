@@ -1,0 +1,66 @@
+Collect the information – Relevant Information  
+================================================
+ 
+Logs  :    There are 2 logging services  
+ 
+a)  Systemd-Journald   -----------------------------> which keeps logs in memory  
+b)  Rsyslogd   -----------------------------> which gets messages sent to it by systemd-journald (others) and stores them to disk  
+ 
+ 
+a)  Systemd-Journald  
+ 
+Using journalctl   ---------------> is the standard way to read the messages from it .  
+ 
+ 
+✓ Boot Messages 
+
+To see boot-related messages from the current boot, use the -b switch: 
+
+# journalctl –b 
+ 
+
+To see messages from the last boot, use the -I modifier; to see boot messages from two boots ago, use -2; and so on. Here, we are trying to see messages from the last boot: 
+
+# journalctl -b –l 
+ 
+
+To list the boots of the system, use the following command: 
+
+# journalctl --list-boots 
+
+It will show a tabular result like this: 
+
+-1 fs5755558e5043d093cd74162d38989h Thu 2015-06-25 00:34:38 EDT-Sat 2015-06-27 21:41:27 EDT 
+
+0 8jh49ca98fcf55c59806b2b6f890aert Sat 2015-06-27 21:41:30 EDT-Sun 2015-06-28 21:10:00 EDT 
+ 
+ 
+# journalctl -ef       =================> for "f"  follow up logs at "e" end of the file  
+ 
+# journalctl  _SYSTEM_UNIT=sshd.service -------------------------->  will give the logs for the sshd.service (specific service) 
+ 
+# journalctl  -p emerg..err   -------------------------->   will list the emergency error messages on the system  
+ 
+# journalctl --since "2019-01-29 20:30:00" --until "2019-01-30 20:30:00" -------------------------->  logs for specific time  
+ 
+# journalctl -o  verbose   -------------------> will the verbose as per fields and contents  
+ 
+ 
+------------------------------------------------------------------------------ 
+Systemd-Journald   ----   Stores the logs in  # cd  /run/log  
+------------------------------------------------------------------------------ 
+# ll journal 
+ 
+o/p : systemd-journal ---------------------> which is store as tmpfs file  -----> location # df –h  
+ 
+ 
+--------------------------------------- 
+Make Persistent  
+--------------------------------------- 
+# cd /var/log    --------------------> change the location to /var/log  
+#  mkdir journal  ----------------> create directory  
+# chown  root:systemd-journal   journal/              -------------------> change ownership of the directory  
+# chmod   2755   journal/             ----------------> change permission on directory   
+# ls –ltrd journal/           ------------------------> verify the permissions and ownership  
+# systemctl restart systemd-journald   --------------------------> restart the systemd-journal services  
+# reboot -----------------------> reboot the system  
