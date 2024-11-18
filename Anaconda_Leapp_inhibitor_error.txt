@@ -1,0 +1,89 @@
+Inhibitor Error 
+===============
+
+Upgrade has been inhibited due to the following problems: 
+    1. Inhibitor: Possible problems with remote login using root account 
+    2. Inhibitor: Upgrade requires links in root directory to be relative 
+    3. Inhibitor: Using RHSM has been skipped but no custom or RHUI repositories have been delivered. 
+    4. Inhibitor: Detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed. 
+    5. Inhibitor: Missing required answers in the answer file 
+Consult the pre-upgrade report for details and possible remediation. 
+
+=========================================================
+
+1] $ cat etc/redhat-release  hostname 
+ 
+Red Hat Enterprise Linux Server release 7.9 (Maipo) 
+xmcldpinstal01d.azocp-poc.aetna.com 
+ 
+2] $ cat etc/rhsm/rhsm.conf | grep baseurl 
+ 
+baseurl = https://xsvccapm2p.aetna.com/pulp/repos 
+ 
+P 
+ 
+lease follow the below steps to resolve inhibitor 
+ 
+ 
+ 
+1] Risk Factor: high (inhibitor) 
+Title: Upgrade requires links in root directory to be relative 
+ 
+# sh -c ln -snf home /users 
+--- 
+ 
+ 
+2] Risk Factor: high (inhibitor) 
+Title: Possible problems with remote login using root account 
+ 
+uncomment PermitRootLogin yes from  /etc/ssh/sshd_config. 
+--- 
+ 
+ 
+3] Risk Factor: high (inhibitor) 
+Title: Using RHSM has been skipped but no custom or RHUI repositories have been delivered. 
+Summary: Leapp is run in the mode when the Red Hat Subscription Manager is not used (the --no-rhsm option or the LEAPP_NO_RHSM=1 environment variable has been set) so leapp is not able to obtain YUM/DNF repositories with the content for the target system in the standard way. 
+ 
+The content has to be delivered either by user manually or, in case of public clouds, by a special Leapp package for RHUI environments. 
+ 
+ 
+ 
+Remediation: [hint] Create the repository file according to instructions in the referred document on the following path with all repositories that should be used during the upgrade: "/etc/leapp/files/leapp_upgrade_repositories.repo". 
+Have you used the following option during preupgrade process 
+ 
+The following options were used during the upgrade?? 
+ 
+--no-rhsm option or the LEAPP_NO_RHSM=1 
+
+ 
+
+ 
+4] Risk Factor: high (inhibitor) 
+Title: Detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed. 
+Summary: Support for the following RHEL 7 device drivers has been removed in RHEL 8: 
+     - floppy 
+     - pata_acpi 
+ 
+# modprobe -r floppy 
+# modprobe -r pata_acpi 
+ 
+ 
+ 
+5] Risk Factor: high (inhibitor) 
+Title: Missing required answers in the answer file 
+ 
+ 
+ 
+# leapp answer --section authselect_check.confirm=True 
+--- 
+Once done with the above steps please execute, 
+ 
+ 
+ 
+# leapp preupgrade 
+--- 
+ 
+ 
+Hope you are following the below documentation: 
+
+============================================
