@@ -1,0 +1,67 @@
+Recovering Corrupt rpms database 
+=================================
+
+=    Rpm database location  
+       /var/lib/rpm 
+ 
+=    ls  
+------------------------------------------------------------------------------------------------------ 
+To list the packages installed on the system  
+ 
+# rpm –qa  
+------------------------------------------------------------------------------------------------------ 
+ 
+before recovery take backup of the directory /var/lib/rpm 
+ 
+# cd  /var/lib/rpm     ---------------> Location of the directory  
+
+# cd  /tmp                   ---------------> location in which we will create the backup  directory (rpmdbdir) and file (rpmdb-10May24.tar.bz2) 
+#  mkdir rpmdbdir     --------------> created Directory  
+#   cd  rpmdbdir/      ----------------> Move inside directory  
+
+#  tar cvjf rpmdb-10May24.tar.bz2  /var/lib/rpm  --------------------------> create tar file  
+#  ls  or ll                      ---------------------------> Verify the file is created  
+ 
+# cd  /var/lib/rpm  ----------------------------> move to the location where rpm databse is located    /var/lib/rpm  
+# pwd    ----------------------------> verify the current location  
+ 
+#  ls or ll packages --------------------------------> Look for the file (Packages ) which is the main database file  
+ 
+#  ll  /usr/lib/rpm/rpmdb_verify   ---------------------------> rpm database entry details  
+ 
+# /usr/lib/rpm/rpmdb_verify Packages     ----------------------------> o/p  (Verification of Packages succeeded ) 
+ 
+------------------------------------------------------- 
+In case is Package is failed to verify then  
+------------------------------------------------------- 
+ 
+Then create the "Packages" file . 
+ 
+First move old package failed package file to some other name 
+# mv Packages Packagesold  
+ 
+# /usr/lib/rpm/rpmdb_load Packages -----------------------> Load the new packages file  
+ 
+# /usr/lib/rpm/rpmdb_verify Packages  ------------------------> Verify if "Packages" file is created and verification is succeeded .  
+ 
+------------------------------------------------------- 
+ 
+ 
+--------------------------------------------------------------- 
+In case is Package is succeeded to verify then  
+--------------------------------------------------------------- 
+ 
+rebuild the rpm database index  
+ 
+#   rpm –v –rebuilddb --------------------------------> create the rpm database index 
+ 
+#  ls –ltr   ----------------------------------> check the index file   (_db.001 or _db.002 or _db.003 ) 
+ 
+# rpm –qa    ---------------------------> verify the installed packages  
+ 
+To view logs file  
+ 
+# ll  /var /log /yum.log  
+# ll  /var /log / messages  
+ 
+ 

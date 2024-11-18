@@ -1,0 +1,190 @@
+This procedure is QUICK GUIDE for a reference purpose for upgrading the x86_64 arch system for other supported architectures  please refer to the Documentation Section. 
+
+ 
+ 
+
+1] Register the system and enable the base, optional and extras repository. 
+
+~~~ 
+
+# subscription-manager register 
+
+# subscription-manager attach --auto 
+
+# subscription-manager repos --enable rhel-6-server-extras-rpms --enable rhel-6-server-optional-rpms 
+
+~~~ 
+
+ 
+
+2]  Unset version lock/release of the system, if any. 
+
+~~~ 
+
+# subscription-manager release --show 
+
+# subscription-manager release --unset 
+
+# yum versionlock clear 
+~~~ 
+
+ 
+
+3]  4]  Update the system to the latest version and reboot the system for new packages and kernel to take effect. 
+
+~~~ 
+
+# yum update  
+
+# yum install preupgrade-assistant preupgrade-assistant-el6toel7 redhat-upgrade-tool 
+
+# reboot 
+~~~ 
+ 
+
+4]  Capture the pre-upgrade results. 
+
+~~~ 
+
+# preupg 
+~~~ 
+
+When the preupg command is run without further options, it produces the result.html and preupg_results-*.tar.gz files in the /root/preupgrade/ directory.  
+
+ 
+
+Review and check `result.html` and resolve problems found by the Preupgrade Assistant during the assessment by following the Remediation text in the `result.html` file. Please check `Pre-upgrade assessment result codes` from the documentation section. 
+ 
+
+5]  Upgrading your system from RHEL 6 to RHEL 7.  There are 3 ways to upgrade the system. 
+
+ 
+
+NOTE :-  Disable active repositories to prevent problems with combining packages from different major releases of RHEL before upgrade.  Backup/clone the system before going for the upgrade. 
+
+ 
+
+--cleanup post: Automatically removes Red Hat-signed packages that do not have a RHEL 7 replacement. Recommended. If you do not use the --cleanup-post option, 
+
+   
+
+-Iso Image  
+
+~~~ 
+
+# redhat-upgrade-tool --iso  <iso_path/of/Latest_RHEL7_iso>  --cleanup-post 
+
+~~~  
+
+ 
+
+Mounted installation media 
+
+~~~ 
+
+# lsblk        (TO check the devices) 
+
+# redhat-upgrade-tool --device device_path --cleanup-post 
+
+~~~ 
+
+If you do not specify the device path, the Red Hat Upgrade Tool scans all mounted removable devices.  
+
+ 
+ 
+
+Network Installation by hosting the installation repositories over the network. 
+
+~~~ 
+
+# redhat-upgrade-tool --network 7.9 --instrepo <ftp-or-http-url-of-repos> --cleanup-post 
+~~~ 
+
+ 
+ 
+
+- Reboot the system to boot with the `redhat-upgrade-tool` initramfs to proceed with the upgrade. 
+
+ 
+ 
+ 
+
+NOTE:- During reboot please make sure the `Physical/Virtual`  console is open for checking the upgrade related activities  
+
+ 
+ 
+ 
+
+6] Post Upgrade Task/precautions. 
+
+ 
+ 
+
+- Remove the residue RHEL 6 packages from upgrade.  
+
+~~~ 
+
+# rpm -qa | grep .el6 &> /tmp/el6.txt 
+
+# rpm -e $(cat /tmp/el6.txt) --nodeps 
+
+~~~ 
+
+ 
+ 
+
+- Migrate from Grub to GRUB2 
+
+~~~ 
+
+https://access.redhat.com/solutions/5429651 
+~~~ 
+
+ 
+ 
+ 
+
+Log Files :-  
+
+ 
+ 
+
+Logs files to be requested capturing the preupgrade results. 
+
+~~~ 
+
+/root/preupgrade/result.html  
+
+/root/preupgrade/preupg_results-*.tar.gz 
+
+/var/log/upgrade.log    (Issue found during the upgrade phase) 
+~~~ 
+
+ 
+ 
+
+Documentation :-  
+
+ 
+ 
+
+1]  Upgrading from RHEL 6 to RHEL 7 
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/upgrading_from_rhel_6_to_rhel_7/index 
+
+ 
+ 
+
+2]  Know Issue :-  
+
+In-place upgrade from a RHEL 6 system to RHEL 7 is impossible with FIPS mode enabled  
+
+In-place upgrade on IBM Z fails and causes a data loss if the LDL format is used  
+
+The Preupgrade Assistant reports notchecked if certain packages are missing on the system  
+
+redhat-upgrade-tool fails to reconfigure the network interfaces, preventing the upgrade to happen  
+
+redhat-upgrade-tool fails to reconfigure the static routes on the network interfaces, preventing the upgrade to happen  
+
+Why does Red Hat Enterprise Linux 6 to 7 in-place upgrade fail if /usr is on separate partition?   

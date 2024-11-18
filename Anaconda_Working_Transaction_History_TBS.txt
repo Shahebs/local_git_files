@@ -1,0 +1,49 @@
+Working with Transaction History: 
+
+ 
+The yum history command enables users to review information about a timeline of yum transactions,  
+the dates and times they occurred, the number of packages affected, whether these transactions succeeded  
+or were aborted, and if the RPM database was changed between transactions.  
+Additionally, this command can be used to undo or redo certain transactions.  
+All history data is stored in the history DB in the /var/lib/yum/history/ directory. 
+
+ 
+#yum history list   ---------------------------------------->  To view the recently installed, deleted packages on the system .  
+ 
+ID   | Login User   |    Date time                        |  Action                |  Altered |  
+24   | Shazz           |    17 – 05 – 2024   12 :36  |  Erase or Install |  1            |  
+ 
+
+#yum history list all 
+
+ 
+
+# yum history info <id> 
+eg :  # yum history info 24 -------------------------------> detailed history  
+ 
+
+To synchronize the rpmdb or yumdb database contents for any installed package with the  
+currently used rpmdb or yumdb database, type the following: 
+
+#yum history sync 
+ 
+------------------------------------------------------------------------------------------------------------------------------------- 
+------------------------------------------------------------------------------------------------------------------------------------- 
+Reverting and Repeating Transactions: 
+ 
+
+Apart from reviewing the transaction history, the yum history command provides means to revert or repeat a selected transaction.  
+To revert a transaction, type the following at a shell prompt as root: 
+
+#yum history undo id 
+eg :  # yum history undo 24  -------------------------------> will undo the action (Erase will Install) or (Install will Erase) 
+ 
+
+To repeat a particular transaction, as root, run the following command: 
+
+#yum history redo id    -------------------------------> will redo the action or will retry to perform the same action or repeat the task  
+ 
+Yum stores the transaction history in a single SQLite database file.  
+To start new transaction history, run the following command as root: 
+
+~]#yum history new 

@@ -1,0 +1,233 @@
+This procedure is QUICK GUIDE for a reference purpose for upgrading the x86_64 arch system (registered to RHSM), for other architectures  please refer to the mentioned Documentation. 
+
+ 
+ 
+
+1] Register the system and enable the base and extras repository. 
+
+~~~ 
+
+# subscription-manager register 
+
+# subscription-manager attach --auto 
+
+# subscription-manager repos --enable rhel-7-server-rpms 
+
+# subscription-manager repos --enable rhel-7-server-extras-rpms 
+
+~~~ 
+
+ 
+ 
+
+2]  Unset version lock/release from the system, if any. 
+
+ ~~~ 
+
+# subscription-manager release --show   >>>>>>>>> Shows the version lock release 
+
+# subscription-manager release --unset 
+
+# yum versionlock clear 
+~~~ 
+
+ 
+ 
+
+3] Ensure you have the system locale set to en_US.UTF-8: 
+
+~~~  
+
+$ cat /etc/locale.conf 
+
+~~~~ 
+
+ 
+ 
+
+4]  Update the system to the latest version and reboot the system for new packages and kernel to take effect. 
+
+~~~ 
+
+# yum update  
+
+# yum install leapp leapp-repository leapp-deps 
+
+# reboot 
+~~~ 
+
+ 
+ 
+
+5]  Download the data files attached to the Knowledgebase article Data required by the Leapp utility for an in-place upgrade from RHEL 7 to RHEL 8 and place them in the /etc/leapp/files/ directory. This is necessary for a successful upgrade. Note that currently you need data files from the leapp-data14.tar.gz archive or later. This is necessary for a successful upgrade in the following scenarios:  
+
+ 
+ 
+ 
+ 
+
+6]  Capture the preupgrade data. 
+
+~~~ 
+
+# leapp preupgrade  
+~~~ 
+
+Review the preupgrade report and check for `INHIBITORS` and eliminate them one by one with the remediation steps mentioned in `/var/log/leapp/leapp-report.txt`.   
+
+Backup/clone the system before going for the upgrade. 
+
+ 
+ 
+
+7]  If everything is fine then go ahead with the upgrade 
+
+~~~ 
+
+# leapp upgrade --debug    (for registered system) 
+
+OR  
+
+# leapp upgrade --enablerepo repository_id1 --enablerepo repository_id2  --no-rhsm  (for unregistered /RHUI/custom repo systems) 
+
+ 
+ 
+
+# reboot  
+~~~ 
+
+NOTE:- During reboot/upgrade please make sure the `Physical/Virtual`  console is open for checking the upgrade related activities .  
+
+ 
+ 
+
+8]  Post upgrade task.  
+
+Remove remaining RHEL 7 packages, Locate remaining RHEL 7 packages: 
+
+~~~ 
+
+# rpm -aq | grep -v -e '[.+]el8' -e '^gpg-pubkey-' -e '^libmodulemd1-' -e '^katello-ca-consumer' 
+~~~ 
+
+- Determine the old kernel version:  
+~~~ 
+# cd /lib/modules && ls -d *.el7* 
+
+~~~ 
+
+- Remove weak modules from the old kernel 
+
+~~~ 
+
+# [ -x /usr/sbin/weak-modules ] && /usr/sbin/weak-modules --remove-kernel <version> 
+~~~ 
+
+ 
+ 
+ 
+ 
+
+- Replace version with the kernel version determined in the previous step, for example 
+
+~~~ 
+
+#  [ -x /usr/sbin/weak-modules ] && /usr/sbin/weak-modules --remove-kernel 3.10.0-1160.25.1.el7.x86_64 
+
+~~~ 
+
+ 
+ 
+
+- Remove the old kernel from the bootloader entry:  
+
+~~~ 
+
+# /bin/kernel-install remove <version> /lib/modules/<version>/vmlinuz 
+
+Example:-  
+
+/bin/kernel-install remove 3.10.0-1160.25.1.el7.x86_64 /lib/modules/3.10.0-1160.25.1.el7.x86_64/vmlinuz 
+
+~~~ 
+
+ 
+ 
+ 
+
+Log Files :-  
+
+ 
+ 
+
+Log Files to be Requested from Customer for verifying the preupgrade results. 
+
+~~~ 
+
+/var/log/leapp/leapp-report.txt 
+
+/var/log/leapp/answerfile 
+
+ 
+ 
+
+If used --verbose or --debug  used with the `leapp preupgrade` command. 
+
+/var/log/leapp/leapp-upgrade.log 
+
+~~~ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Documentation:-  
+
+ 
+ 
+
+1]  Upgrading from RHEL 7 to RHEL 8 
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index 
+
+ 
+ 
+ 
+
+2] Supported in-place upgrade paths for Red Hat Enterprise Linux 
+
+    https://access.redhat.com/articles/4263361 
+
+ 
+ 
+
+3]  How to in-place upgrade SAP environments from RHEL 7 to RHEL 8 
+
+     https://access.redhat.com/solutions/5154031 
+
+ 
+ 
+
+4]  Running leapp upgrade on Content Hosts registered with Red Hat Satellite 6 fails with Message: Unable to install     RHEL 8 userspace packages. 
+
+  https://access.redhat.com/solutions/5118641 
+
+ 
+ 
+
+5]  [leapp] At least X MB more space needed on the </XXX> filesystem 
+
+https://access.redhat.com/solutions/5057391 
+
+ 
+ 
+
+ 

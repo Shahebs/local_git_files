@@ -1,0 +1,95 @@
+ 
+
+This procedure is QUICK GUIDE for a reference purpose for upgrading the x86_64 arch system (registered to RHSM), for other architectures  please refer to the mentioned Documentation. 
+
+ 
+
+1] Update the Centos RHEL system To the Latest version. 
+
+~~~ 
+
+# yum update 
+
+~~~ 
+ 
+
+2] Download the Red Hat GPG key. 
+
+~~~ 
+
+# curl -o /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release https://www.redhat.com/security/data/fd431d51.txt 
+
+~~~ 
+
+ 
+
+3] Install the Convert2RHEL repository, replacing VERSION_NUMBER with the appropriate major version of the OS, for example 7 or 8. 
+
+~~~ 
+
+# curl -o /etc/yum.repos.d/convert2rhel.repo https://ftp.redhat.com/redhat/convert2rhel/VERSION_NUMBER/convert2rhel.repo 
+ 
+
+Example:-  
+
+# curl -o /etc/yum.repos.d/convert2rhel.repo https://ftp.redhat.com/redhat/convert2rhel/7/convert2rhel.repo 
+
+~~~ 
+
+ 
+
+4] Install the Convert2RHEL utility. Then run it with -h to see all options 
+
+~~~ 
+
+# yum -y install convert2rhel 
+
+# convert2rhel -h                                 >>>>>>>>>>>> To get the help on convert2rhel commands 
+
+~~~ 
+ 
+
+Use the `Convert2RHEL`  utility to begin the conversion process and it is registered to the Subscription Manager. The -y option can be used after testing to auto-answer yes for known, tested scenarios.  Additional capabilities such as using Activation Keys instead of sensitive credentials are explained in the documentation. 
+
+~~~ 
+
+# convert2rhel --auto-attach --username=USERNAME --password=PASSWORD 
+
+Or  
+
+# convert2rhel --auto-attach --username=USERNAME --password=PASSWORD 
+
+--pool=<pool_ID> 
+
+~~~ 
+
+NOTE:-  It is recommended to add --debug option for more verbose output. 
+
+ 
+
+Log FIles::-  
+
+ 
+ 
+
+Log Files to be Requested from Customer in case of failure. 
+
+ 
+
+~~~ 
+
+/var/log/convert2rhel/convert2rhel.log 
+
+/var/log/convert2rhel/rpm_va.log 
+~~~ 
+
+Documentation:-  
+
+1] Converting from an RPM-based Linux distribution to RHEL 
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/converting_from_an_rpm-based_linux_distribution_to_rhel/index 
+
+ 
+ 
+
+ 

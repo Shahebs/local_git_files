@@ -1,0 +1,98 @@
+Identify and Fix RPM issues   
+===========================
+
+Resolve Package Dependencies  -   When an RPM Package requires functionality and that is provided by another package then one package gets dependent on other. The rpm command does not resolve these dependencies. The yum command resolves dependencies and uses rpm to install or erase a package. 
+ 
+- When diagnosing RPM dependency issues, the system logs are not very helpful. In addition to the RPM database, the /var/log/yum.log log contains a history of installed and erased packages. 
+ 
+- Displaying package dependencies 
+ 
+
+# yum deplist <Package-Name>                ------------------------------------> More descriptive Option  
+or 
+# rpm –q –requires <Package-Name>
+
+===========================================================================
+
+Error  
+
+[root@servera ~]# yum -y install base-mod 
+
+Loaded plugins: langpacks, search-disabled-repos 
+
+Resolving Dependencies 
+
+--> Running transaction check 
+
+--> Finished Dependency Resolution 
+ 
+
+Error: Package: base-mod-@.2-3.e17.noarch 
+
+Requires: base-prereq = 0.1                              --------------------------------------->   Dependent package of version 0.1 is required  
+
+  
+
+Installed: base-prereq-0.2-1.e17.noarch         --------------------------------------->  currently  dependent package of version 0.2 is installed (which is higher version) 
+
+base-prereq = 0.2-1.e17 
+ 
+
+Available: base|-prereq-@.1-1.e17.noarch 
+
+rht-prereq = .1-1.e17 
+
+  
+
+You could try using --skip-broken to work around the problem 
+
+You could try running: rpm -Va --nofiles –nodigest
+
+
+============================================================================================
+
+Downgrade the Package from        base-prereq = 0.2        to         base-prereq = 0.1   
+ 
+# yum –y downgrade base-prereq 
+ 
+Once downgraded successfully to version 0.1 then you can try to install the package again using the below command .  
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+ 
+Install the package base-mod again  
+ 
+# yum install –y base-mod  
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+ 
+# rpm –qa | grep -I  <vsftpd>             ------------------------------> Version installed on the system                             
+vsftd- 2.0-10.14  
+ 
+# yum list  <vsftpd>                            -------------------------------->  Version available on repository  
+vsftd – 2.0-10.25  
+ 
+You can lock the version of the package using the pulgin -  # yum install yum-pulgin-versionlock  
+ 
+- To check the version lock packages  
+# yum versionlock list  
+ 
+- To lock the specific package using version lock  
+# yum versionlock add vsftpd  
+ 
+- To unlock the specific package using version lock  
+# yum versionlock delete vsftpd  
+
+ 
+-------------------------------------------------------------------------------------------------------------------------------------------------- 
+Third party package which is installed on the system .  
+ 
+Please provide us with the output of the following to check if there is any third party curl package: 
+ 
+ 
+# rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH} %{VENDOR}\n' | grep -v 'Red Hat, Inc\.' | grep -i curl 
+ 
+ 
+Output  :  
+[root@prdovchagnt001 ~]# rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH} %{VENDOR}\n' | grep -v 'Red Hat, Inc\.' | grep -i curl 
+ 
+libcurl-7.81.0-1.0.cf.fc19.x86_64    city-fan.org      repo      http://www.city-fan.org/ftp/contrib/ 
+--------------------------------------------------------------------------------------------------------------------------------------------------------  
+

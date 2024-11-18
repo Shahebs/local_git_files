@@ -1,0 +1,92 @@
+"Errors during downloading metadata for repository 'rhel-8-for-x86_64-appstream-rpms'"  followed by "- Curl error (28): Timeout was reached for https://cdn.redhat.com/content/dist/rhel8/8/x86_64/appstream/os/repodata/repomd.xml [Connection timed out after 30000 milliseconds]"===================================================
+
+# cat /etc/redhat-release 
+ 
+# cat /etc/rhsm/rhsm.conf 
+ 
+# subscription-manager refresh 
+ 
+# subscription-manager list --consumed 
+ 
+# subscription-manager list --installed 
+ 
+# subscription-manager list --available --all 
+ 
+# subscription-manager repos --list 
+ 
+# subscription-manager repos --list-enabled 
+ 
+# yum clean all 
+ 
+# yum repolist -v 
+
+=================================================
+
+# ping subscription.rhsm.redhat.com 
+ 
+# ping cdn.redhat.com 
+ 
+# telnet subscription.rhsm.redhat.com 443    <<--- use 'nc -v' if telnet not installed 
+ 
+# telnet cdn.redhat.com 443 
+ 
+ 
+# env | grep -i proxy 
+# curl -v  https://subscription.rhsm.redhat.com/subscription --cacert /etc/rhsm/ca/redhat-uep.pem 
+ 
+# curl -v  https://cdn.redhat.com --cacert /etc/rhsm/ca/redhat-uep.pem 
+
+==============================================
+
+To check this further please share the below information: 
+ 
+ 
+ 
+1. Is the system behind a corporate/network firewall or a proxy server? 
+ 
+ 
+2. Have you whitelisted the below URLs in your corporate/network firewall or proxy for a successful yum connectivity? 
+ 
+    
+ 
+   subscription.rhn.redhat.com:443 [https] AND subscription.rhsm.redhat.com:443 [https] 
+    cdn.redhat.com:443 [https] 
+    *.akamaiedge.net:443 [https] OR *.akamaitechnologies.com:443 [https] 
+ 
+ 
+3. Does your Firewall/proxy use Hostname based or IP based filtering? 
+ 
+4. Kindly share the output of below commands from the system as: 
+ 
+   
+# env |grep -i proxy 
+ 
+ 
+  # telnet subscription.rhsm.redhat.com 443 
+ 
+   
+# telnet cdn.redhat.com 443 
+ 
+ 
+  # subscription-manager config 
+ 
+  # cat /etc/yum.conf 
+ 
+  # subscription-manager refresh 
+ 
+ 
+# subscription-manager list  
+ 
+  # curl -vvv https://subscription.rhsm.redhat.com --cacert /etc/rhsm/ca/redhat-uep.pem 
+ 
+   
+ 
+# curl -vvv https://cdn.redhat.com --cacert /etc/rhsm/ca/redhat-uep.pem 
+ 
+ 
+  # yum clean all 
+ 
+# yum repolist -v 
+  
+
+=====================================================

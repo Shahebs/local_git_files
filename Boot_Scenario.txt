@@ -1,0 +1,71 @@
+1. What to do if a server fails to boot? 
+
+https://access.redhat.com/articles/5250481 
+
+ 
+
+2. How to install or re-install a package in rescue mode. (Using `--root` option) 
+
+https://access.redhat.com/solutions/163073 
+
+ 
+
+3]  How to boot a system into rescue mode     
+
+https://access.redhat.com/solutions/770703 
+(To enable sshd service from rescue mode add `sshd=1` from rescue prompt) 
+
+ 
+
+4]  Enabling networking in rescue environment without chrooting 
+
+https://access.redhat.com/solutions/2626631 
+
+ 
+5]  Getting  the `rpm -va`  and Packages details outside chroot Environment,  if the rpm command inside chroot Environment is not working. 
+
+~~~ 
+
+#rpm -Va --root=/mnt/sysimage  &> /tmp/rpmva.out 
+
+# egrep -v " c | d | g " /tmp/rpmva.out | awk '{print $NF}' | sort | uniq | xargs rpm -qf  --root=/mnt/sysimage 2>/dev/null | sort | uniq &> /tmp/pkgs.out 
+
+ 
+ 
+
+# rpm -qa --root=/mnt/sysimage --queryformat "%{NAME} = %{VERSION}-%{RELEASE}.%{ARCH} = %{VENDOR} \n" | sort &> /tmp/forth-rpm.out 
+~~~ 
+
+Gather /tmp/rpmva.out /tmp/pkgs.out and /tmp/forth-rpm.out from customers.  
+
+ 
+ 
+
+6] Gather the screenshot of the boot failure. 
+
+~~~ 
+
+i) Interrupt the countdown at GRUB if it can get to GRUB 
+
+ii) Highlight the kernel you are attempting to boot into and press e to modify the kernel parameters 
+
+   iii) Remove all instances of 'rhgb' and 'quiet'  
+
+   iv) Boot with the changes 
+
+      - RHEL 6: Press "b"    
+
+            - RHEL 7/8: "Ctrl + x" key 
+
+    Note : any changes made are only temporary for the current boot cycle. 
+
+  v) If the Plymouth Splash screen appears (the red and white loading bar), remove it with ESC or an arrow key 
+
+vi) Gather screenshots from there and attach to the case. 
+
+~~~ 
+
+ 
+ 
+
+ 

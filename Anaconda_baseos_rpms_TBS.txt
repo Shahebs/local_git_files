@@ -1,0 +1,46 @@
+Errors during downloading metadata for repository 'rhel-8-for-x86_64-baseos-rpms': 
+ 
+- Curl error (35): SSL connect error for https://cdn.redhat.com/content/dist/rhel8/8/x86_64/baseos/os/repodata/repomd.xml [error:1408F10B:SSL routines:ssl3_get_record:wrong version number] 
+ 
+Error: Failed to download metadata for repo 'rhel-8-for-x86_64-baseos-rpms': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried 
+ 
+==============================================================
+
+1.) kindly execute the below mentioned commands and share the outputs with us. 
+     
+ 
+# yum clean all 
+ 
+# rm -rf /var/cache/yum/* 
+ 
+# yum repolist –v 
+ 
+# subscription-manager status 
+ 
+# subscription-manager list --consumed 
+ 
+# subscription-manager refresh 
+ 
+# subscription-manager release show       
+ 
+2.) Confirm whether your system is behind any proxy or firewall? 
+ 
+If yes then kindly mention the same. 
+ 
+ 
+ 
+3.) Furthermore, Kindly execute the below mentioned commands and share the outputs with us to check your systems connectivity with the Red Hat' Network. 
+ 
+# curl -vvv  https://subscription.rhsm.redhat.com --cacert /etc/rhsm/ca/redhat-uep.pem 
+ 
+# curl -vvv  https://cdn.redhat.com --cacert /etc/rhsm/ca/redhat-uep.pem 
+ 
+# env|grep -i proxy 
+ 
+ 
+# openssl s_client -connect subscription.rhsm.redhat.com:443 -CAfile /etc/rhsm/ca/redhat-uep.pem 
+ 
+ 
+# openssl s_client -connect cdn.redhat.com:443 -CAfile /etc/rhsm/ca/redhat-uep.pem 
+
+ 

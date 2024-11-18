@@ -1,0 +1,19 @@
+backup of all your old repositories
+===================================
+
+[1] Mount the DVD ISO to any directory.  
+# ls rhel-server-5.11-x86_64-dvd.iso  
+# mkdir /localrepo # mount -o loop rhel-server-5.11-x86_64-dvd.iso /localrepo  
+ 
+[2] Take backup of all your old repositories.  
+# mkdir /old_repo  
+
+# mv /etc/yum.repos.d/* /old_repo/ 
+ 
+[3] Create the following file in /etc/yum.repos.d/ which is your new repository now.  
+
+# vi /etc/yum.repos.d/myrepo.repo [rhel-local] name=Red Hat Enterprise Linux 5.11 Local repository baseurl=file:///localrepo enabled=1 gpgche 
+ 
+ 
+ 
+ 
